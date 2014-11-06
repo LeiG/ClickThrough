@@ -1,11 +1,11 @@
 #!/usr/bin/python
 """
-Sub-sample the original training set into subsets based on click/non-click per
-hour and add two attributes, i.e. day and short_hour.
+Sub-sample the preprocessed training set into subsets based on click/non-click
+per hour.
 
 Input
 ------
-train_rev2.csv: the downloaded training set.
+ptrain.csv: the preprocessed training set.
 num: the number of subsets. Default is 10.
 
 Output
@@ -57,30 +57,23 @@ def sub_sample(filename, num=10):
             if not is_header:
                 if lines != []: # check if not empty
                     line_split = line.split(',')
-                    line_hour = line_split[2]
-                    # extract day and hour
-                    line_split.extend([line_hour[4:6], line_hour[6:]])
                     # check if in same hour
-                    if line_last == line_hour:
+                    if line_last == line_split[2]:
                         lines.append(line_split)
                     else:
                         append_files(lines, num=num)
                         lines = []
                 else:
                     line_split = line.split(',')
-                    line_hour = line_split[2]
-                    # extract day and hour
-                    line_split.extend([line_hour[4:6], line_hour[6:]])
                     lines.append(line_split)
-                    line_last = line_hour # hour indicator
+                    line_last = line_split[2] # hour indicator
             else:
                 # header of the file
                 file_header = line.split(',')
-                file_header.extend(['day', 'short_hour']) # add two attributes
                 append_files(file_header, num=num, is_header=is_header)
                 is_header = 0
         print "subsampling SUCCEED!!"
 
 if __name__ == "__main__":
     random.seed(3)
-    sub_sample('train_rev2.csv', num=10)
+    sub_sample('ptrain.csv', num=10)
